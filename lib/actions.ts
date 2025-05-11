@@ -1,5 +1,7 @@
 "use server";
 
+
+import { clerkClient } from "@clerk/nextjs/server";
 import {
   ClassSchema,
   ExamSchema,
@@ -8,7 +10,7 @@ import {
   TeacherSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
-import { clerkClient } from "@clerk/nextjs/server";
+
 
 type CurrentState = { success: boolean; error: boolean };
 
@@ -137,12 +139,12 @@ export const deleteClass = async (
 };
 
 export const createTeacher = async (
-  currentState: CurrentState,
+  // currentState: CurrentState,
   data: TeacherSchema
 ) => {
   try {
-    const user = await  (await clerkClient()).users.createUser({
-    
+    const client = await clerkClient()
+    const user = await client.users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
@@ -152,7 +154,7 @@ export const createTeacher = async (
 
     await prisma.teacher.create({
       data: {
-        id: user.id,
+         id:user.id,
         username: data.username,
         name: data.name,
         surname: data.surname,
@@ -180,15 +182,16 @@ export const createTeacher = async (
 };
 
 export const updateTeacher = async (
-  currentState: CurrentState,
+  // currentState: CurrentState,
   data: TeacherSchema
 ) => {
   if (!data.id) {
     return { success: false, error: true };
   }
   try {
+    const client = await clerkClient()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const user =  (await clerkClient()).users.updateUser(data.id, {
+    const user = await client.users.updateUser(data.id, {
       username: data.username,
       ...(data.password !== "" && { password: data.password }),
       firstName: data.name,
@@ -232,7 +235,8 @@ export const deleteTeacher = async (
 ) => {
   const id = data.get("id") as string;
   try {
-     (await clerkClient()).users.deleteUser(id);
+    const client = await clerkClient()
+    await client.users.deleteUser(id);
 
     await prisma.teacher.delete({
       where: {
@@ -253,6 +257,7 @@ export const createStudent = async (
   data: StudentSchema
 ) => {
   console.log(data);
+
   try {
     const classItem = await prisma.class.findUnique({
       where: { id: data.classId },
@@ -262,8 +267,8 @@ export const createStudent = async (
     if (classItem && classItem.capacity === classItem._count.students) {
       return { success: false, error: true };
     }
-
-    const user = await (await clerkClient()).users.createUser({
+    const client = await clerkClient()
+    const user = await client.users.createUser({
       username: data.username,
       password: data.password,
       firstName: data.name,
@@ -306,8 +311,9 @@ export const updateStudent = async (
     return { success: false, error: true };
   }
   try {
+    const client = await clerkClient()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const user = await (await clerkClient()).users.updateUser(data.id, {
+    const user = await client.users.updateUser(data.id, {
       username: data.username,
       ...(data.password !== "" && { password: data.password }),
       firstName: data.name,
@@ -349,7 +355,8 @@ export const deleteStudent = async (
 ) => {
   const id = data.get("id") as string;
   try {
-    await (await clerkClient()).users.deleteUser(id);
+    const client = await clerkClient()
+    await client.users.deleteUser(id);
 
     await prisma.student.delete({
       where: {

@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState, useTransition } from "react";
 import { teacherSchema, TeacherSchema } from "@/lib/formValidationSchemas";
-import { useFormState } from "react-dom";
+// import { useFormState } from "react-dom";
 import { createTeacher, updateTeacher } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -19,10 +20,8 @@ const TeacherForm = ({
   relatedData,
 }: {
   type: "create" | "update";
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   relatedData?: any;
 }) => {
   const {
@@ -33,31 +32,49 @@ const TeacherForm = ({
     resolver: zodResolver(teacherSchema),
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [img, setImg] = useState<any>();
+  const [success, setSuccess] = useState<boolean | undefined>()
+  const [error,setError]=useState<boolean | undefined>()
 
-  const [state, formAction] = useFormState(
-    type === "create" ? createTeacher : updateTeacher,
-    {
-      success: false,
-      error: false,
-    }
-  );
+  // const [state, formAction] = useFormState(
+  //   type === "create" ? createTeacher : updateTeacher,
+  //   {
+  //     success: false,
+  //     error: false,
+  //   }
+  // );
+   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   const [isPending, startTransition] =useTransition()
 
   const onSubmit = handleSubmit((data) => {
+    setError(false)
+    setSuccess(false)
     console.log(data);
-    formAction({ ...data, img: img?.secure_url });
+    
+    startTransition(type === "create" ? ()=>createTeacher({ ...data, img: img?.secure_url }).then((data)=>{
+      setSuccess(data.success)
+      setError(data.error)
+    }) : ()=>updateTeacher({ ...data, img: img?.secure_url }).then((data)=>{
+      setSuccess(data.success)
+      setError(data.error)
+    })
+    ) 
+    
+    // startTransition(()=>createTeacher({ ...data, img: img?.secure_url }).then((data)=>{
+    //   setSuccess(data.success)
+    //   setError(data.error)
+    // }))
   });
 
   const router = useRouter();
 
   useEffect(() => {
-    if (state.success) {
+    if (success) {
       toast(`Teacher has been ${type === "create" ? "created" : "updated"}!`);
       setOpen(false);
       router.refresh();
     }
-  }, [state, router, type, setOpen]);
+  }, [success, router, type, setOpen]);
 
   const { subjects } = relatedData;
 
@@ -206,7 +223,7 @@ const TeacherForm = ({
           }}
         </CldUploadWidget>
       </div>
-      {state.error && (
+      {error && (
         <span className="text-red-500">Something went wrong!</span>
       )}
       <button className="bg-blue-400 text-white p-2 rounded-md">

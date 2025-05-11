@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // ADMIN
+  await prisma.admin.deleteMany()
   await prisma.admin.create({
     data: {
       id: "admin1",
