@@ -7,13 +7,17 @@ import { Class, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { auth } from "@clerk/nextjs/server";
+import { CurrentRole} from "@/Hooks/auth";
+
 
 const TeacherListPage = async ({
   searchParams,
 }: {
   searchParams:Promise<{ [key: string]: string | undefined }>;
 }) => {
+  
+
+
   type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
   const renderRow = (item: TeacherList) => (
     <tr
@@ -33,7 +37,7 @@ const TeacherListPage = async ({
           <p className="text-xs text-gray-500">{item?.email}</p>
         </div>
       </td>
-      <td className="hidden md:table-cell">{item.username}</td>
+      <td className="hidden md:table-cell">{item.name}</td>
       <td className="hidden md:table-cell">
         {item.subjects.map((subject) => subject.name).join(",")}
       </td>
@@ -59,8 +63,9 @@ const TeacherListPage = async ({
       </td>
     </tr>
   );
-  const { sessionClaims } =await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+
+  const role = await CurrentRole();
   const columns = [
     {
       header: "Info",

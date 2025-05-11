@@ -1,4 +1,38 @@
 import { z } from "zod";
+import { isUsernameTaken } from "./actions";
+
+
+// 
+const name = z
+  .string()
+  .min(2, { message: 'name must be at least 2 characters' })
+  .max(50, { message: 'name must be at most 30 characters' }).trim()
+  .regex(/^\S+$/, "No spaces allowed").refine(async (name) => !(await isUsernameTaken(name)), {
+    message: "Username is already taken",
+  })
+
+
+const Email = z.string().min(1, 'Email is required').email('Email is invalid')
+const Password = z.string().min(3, 'Password must be at least 3 characters')
+
+
+
+export const UserSignInSchema = z.object({
+  email: Email,
+  password: Password,
+})
+export const UserSignUpSchema = UserSignInSchema.extend({
+  name: name,
+  password: Password,
+  confirmPassword: Password,
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword'],
+})
+export const nameSchema = z.object({
+  name: name,
+})
+
 
 export const subjectSchema = z.object({
   id: z.coerce.number().optional(),
@@ -20,16 +54,20 @@ export type ClassSchema = z.infer<typeof classSchema>;
 
 export const teacherSchema = z.object({
   id: z.string().optional(),
-  username: z
+  name: z
     .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
-    .max(20, { message: "Username must be at most 20 characters long!" }),
+    .min(3, { message: "name must be at least 3 characters long!" })
+    .max(20, { message: "name must be at most 20 characters long!" }).trim()
+    .regex(/^\S+$/, "No spaces allowed"),
+  firstName: z
+    .string()
+    .min(3, { message: "name must be at least 3 characters long!" })
+    .max(20, { message: "name must be at most 20 characters long!" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long!" })
     .optional()
     .or(z.literal("")),
-  name: z.string().min(1, { message: "First name is required!" }),
   surname: z.string().min(1, { message: "Last name is required!" }),
   email: z
     .string()
@@ -49,16 +87,20 @@ export type TeacherSchema = z.infer<typeof teacherSchema>;
 
 export const studentSchema = z.object({
   id: z.string().optional(),
-  username: z
+  name: z
     .string()
-    .min(3, { message: "Username must be at least 3 characters long!" })
-    .max(20, { message: "Username must be at most 20 characters long!" }),
+    .min(3, { message: "name must be at least 3 characters long!" })
+    .max(20, { message: "name must be at most 20 characters long!" }).trim()
+    .regex(/^\S+$/, "No spaces allowed"),
+    firstName: z
+    .string()
+    .min(3, { message: "name must be at least 3 characters long!" })
+    .max(20, { message: "name must be at most 20 characters long!" }), 
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long!" })
     .optional()
     .or(z.literal("")),
-  name: z.string().min(1, { message: "First name is required!" }),
   surname: z.string().min(1, { message: "Last name is required!" }),
   email: z
     .string()

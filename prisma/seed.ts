@@ -7,13 +7,13 @@ async function main() {
   await prisma.admin.create({
     data: {
       id: "admin1",
-      username: "admin1",
+      name: "admin1",
     },
   });
   await prisma.admin.create({
     data: {
       id: "admin2",
-      username: "admin2",
+      name: "admin2",
     },
   });
 
@@ -60,7 +60,7 @@ async function main() {
     await prisma.teacher.create({
       data: {
         id: `teacher${i}`, // Unique ID for the teacher
-        username: `teacher${i}`,
+        firstName: `teacher${i}`,
         name: `TName${i}`,
         surname: `TSurname${i}`,
         email: `teacher${i}@example.com`,
@@ -99,7 +99,7 @@ async function main() {
     await prisma.parent.create({
       data: {
         id: `parentId${i}`,
-        username: `parentId${i}`,
+        firstName: `parentId${i}`,
         name: `PName ${i}`,
         surname: `PSurname ${i}`,
         email: `parent${i}@example.com`,
@@ -114,7 +114,7 @@ async function main() {
     await prisma.student.create({
       data: {
         id: `student${i}`, 
-        username: `student${i}`, 
+        firstName: `student${i}`, 
         name: `SName${i}`,
         surname: `SSurname ${i}`,
         email: `student${i}@example.com`,

@@ -2,11 +2,11 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import { CurrentRole, CurrentUser } from "@/Hooks/auth";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
 
 type ExamList = Exam & {
   lesson: {
@@ -22,9 +22,9 @@ const ExamListPage = async ({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
 
-const { userId, sessionClaims } = await auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
-const currentUserId = userId;
+  const user =await CurrentUser()
+  const role = await CurrentRole();
+  const currentUserId = user?.id;
 
 
 const columns = [

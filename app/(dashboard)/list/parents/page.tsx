@@ -2,12 +2,12 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import { CurrentRole } from "@/Hooks/auth";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Parent, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 
-import { auth } from "@clerk/nextjs/server";
 
 type ParentList = Parent & { students: Student[] };
 
@@ -17,8 +17,8 @@ const ParentListPage = async ({
   searchParams:Promise<{ [key: string]: string | undefined }>;
 }) => {
 
-const { sessionClaims } = await auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+  const role = await CurrentRole();
 
 
 const columns = [

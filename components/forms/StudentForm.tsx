@@ -81,11 +81,11 @@ const StudentForm = ({
       </span>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Username"
-          name="username"
-          defaultValue={data?.username}
+          label="Name"
+          name="name"
+          defaultValue={data?.name}
           register={register}
-          error={errors?.username}
+          error={errors?.name}
         />
         <InputField
           label="Email"
@@ -128,7 +128,7 @@ const StudentForm = ({
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
           label="First Name"
-          name="name"
+          name="firstName" 
           defaultValue={data?.name}
           register={register}
           error={errors.name}

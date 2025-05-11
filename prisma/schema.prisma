@@ -7,18 +7,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              String   @id @default(cuid())
+  role            UserRole
+  password        String
+  confirmPassword String?
+  name            String   @unique
+  email           String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  Admin           Admin?
+}
+
 model Admin {
-  id       String @id
-  username String @unique
+  id     String   @id @default(cuid())
+  name   String
+  role   UserRole @default(admin)
+  userId String?  @unique
+  user   User?    @relation(fields: [userId], references: [id])
 }
 
 model Student {
-  id          String       @id
-  username    String       @unique
-  name        String
-  surname     String
+  id          String       @id @default(cuid())
+  role        UserRole?    @default(student)
+  password    String?
+  name        String       @unique
+  firstName   String
   email       String?      @unique
-  phone       String?      @unique
+  surname     String
+  phone       String?
   address     String
   img         String?
   bloodType   String
@@ -36,12 +53,14 @@ model Student {
 }
 
 model Teacher {
-  id        String    @id
-  username  String    @unique
+  id        String    @id @default(cuid())
+  password  String?
   name      String
-  surname   String
+  firstName String
   email     String?   @unique
-  phone     String?   @unique
+  surname   String
+  role      UserRole? @default(teacher)
+  phone     String?
   address   String
   img       String?
   bloodType String
@@ -54,13 +73,15 @@ model Teacher {
 }
 
 model Parent {
-  id        String    @id
-  username  String    @unique
-  name      String
+  id        String    @id @default(cuid())
   surname   String
+  password  String?
+  name      String
+  firstName String?
   email     String?   @unique
-  phone     String    @unique
+  phone     String
   address   String
+  role      UserRole? @default(parent)
   createdAt DateTime  @default(now())
   students  Student[]
 }
@@ -74,7 +95,7 @@ model Grade {
 
 model Class {
   id            Int            @id @default(autoincrement())
-  name          String         @unique
+  name          String
   capacity      Int
   supervisorId  String?
   gradeId       Int
@@ -182,3 +203,15 @@ enum Day {
   THURSDAY
   FRIDAY
 }
+
+enum UserRole {
+  admin
+  student
+  parent
+  teacher
+}
+
+// npx prisma generate
+// npx prisma db push 
+// npx prisma migrate dev --name init
+// npx prisma studio
