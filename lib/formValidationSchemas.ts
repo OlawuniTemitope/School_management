@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { isUsernameTaken } from "./actions";
 
 
 // 
@@ -7,9 +6,7 @@ const name = z
   .string()
   .min(2, { message: 'name must be at least 2 characters' })
   .max(50, { message: 'name must be at most 30 characters' }).trim()
-  .regex(/^\S+$/, "No spaces allowed").refine(async (name) => !(await isUsernameTaken(name)), {
-    message: "Username is already taken",
-  })
+  .regex(/^\S+$/, "No spaces allowed")
 
 
 const Email = z.string().min(1, 'Email is required').email('Email is invalid')

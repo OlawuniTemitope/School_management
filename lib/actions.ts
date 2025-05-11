@@ -17,14 +17,6 @@ import prisma from "./prisma";
 
 type CurrentState = { success: boolean; error: boolean };
 
-export async function isUsernameTaken(name: string) {
-  const takenUsernames = await prisma.user.findUnique({
-    where:{name:name}
-  })
-  console.log(takenUsernames?.name)
-  return takenUsernames?.name?.includes(name)
-}
-
 export async function signInWithCredentials(user: IUserSignIn) {
   console.log(user)
   
