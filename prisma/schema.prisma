@@ -12,7 +12,7 @@ model User {
   role            UserRole
   password        String
   confirmPassword String?
-  name            String   @unique
+  name            String
   email           String   @unique
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -31,7 +31,7 @@ model Student {
   id          String       @id @default(cuid())
   role        UserRole?    @default(student)
   password    String?
-  name        String       @unique
+  name        String
   firstName   String
   email       String?      @unique
   surname     String
