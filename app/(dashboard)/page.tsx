@@ -1,22 +1,16 @@
-"use client"
-import { useCurrentRole } from '@/Hooks/use-current-role';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { CurrentRole } from '@/Hooks/auth';
+import { redirect } from 'next/navigation';
 
-const Page =  () => {
-    const router = useRouter()
-    // const role = await CurrentRole()
-    const role = useCurrentRole()
+const Page = async () => {
+    const role = await CurrentRole()
     console.log(role)
 
-    useEffect(() => {
-      if (role){
-        router.push(`/${role}`)
-      }
-    }, [role, router]);
-    
-  return (<div>Loading...</div>
-)      
+      if (!role){
+          return <div>Loading...</div>
+        }
+        else{
+      redirect(`/${role}`)
+     }
 
 }
 
