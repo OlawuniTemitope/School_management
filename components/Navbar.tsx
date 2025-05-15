@@ -1,10 +1,11 @@
 // import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Logout from "./LogoutButton";
+import { CurrentUser } from "@/Hooks/auth";
 
 
 const Navbar = async () => {
-  // const user = await currentUser();
+  const user = await CurrentUser();
   return (
     <div className="flex items-center justify-between p-4">
       {/* SEARCH BAR */}
@@ -30,10 +31,10 @@ const Navbar = async () => {
         <div className="flex flex-col">
           <span className="text-xs leading-3 font-medium">John Doe</span>
           <span className="text-[10px] text-gray-500 text-right">
-            {/* {user?.publicMetadata?.role as string} */}
+            {user?.role as string}
           </span>
         </div>
-        {/* <Image src="/avatar.png" alt="" width={36} height={36} className="rounded-full"/> */}
+        <Image src="/avatar.png" alt="" width={36} height={36} className="rounded-full"/>
         
        <Logout/>
       </div>

@@ -71,7 +71,7 @@ export default function CredentialsSignInForm() {
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input type='hidden' name='callbackUrl' value={callbackUrl} />
-        <div className='space-y-6'>
+        <div className='space-y-16 '>
           <FormField
             control={control}
             name='email'
